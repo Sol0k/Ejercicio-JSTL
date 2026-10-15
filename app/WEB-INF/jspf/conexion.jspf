@@ -1,0 +1,50 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+
+<%--
+    EJERCICIO 8 - Conexion a la base de datos
+    ===========================================================================
+    Archivo .jspf (JSP Fragment) reutilizable. Vive en WEB-INF/jspf/ para que
+    el contenedor NUNCA lo sirva como pagina: solo se puede usar includendolo
+    desde otra JSP.
+
+    <sql:setDataSource dataSource="..." driver="..." url="..." user="..." password="..."/>
+    Crea (y cachea) un objeto DataSource que las etiquetas <sql:query> y
+    <sql:update> de la misma pagina reutilizaran.
+
+        dataSource : nombre interno con el que se guarda la conexion en la cache
+                     de JSTL. No es un nombre de JNDI, asi que no hace falta
+                     crear ningun recurso en server.xml ni context.xml.
+        driver     : clase del driver JDBC, que debe estar en WEB-INF/lib
+        url        : cadena de conexion
+        user       : usuario de MySQL
+        password   : clave de MySQL (aqui vacia)
+
+    La inclusion se hace con <%@ include file="conexion.jspf" %>, que es una
+    inclusion ESTATICA: el contenido se pega dentro de la pagina al compilarse,
+    de modo que las directivas taglib de este archivo tambien quedan disponibles.
+    Por eso el <%@ taglib sql %> de aqui sirve para el archivo que lo incluye.
+--%>
+
+<%--
+    PARAMETROS DE CONEXION (servidor MySQL/MariaDB local)
+    -----------------------------------------------------
+    driver  : com.mysql.jdbc.Driver  (nombre clasico, el que pide el ejercicio;
+              el jar moderno de MySQL lo conserva como alias y delega en
+              com.mysql.cj.jdbc.Driver)
+    url     : jdbc:mysql://localhost:3306/empleados
+    user    : root
+    password: (vacio)
+
+    Las opciones que van despues del "?" solo hacen falta en algunos servidores:
+        useSSL=false               -> evita el aviso de certificado en MySQL 8
+        allowPublicKeyRetrieval=true-> necesario si root usa caching_sha2_password
+        serverTimezone=UTC         -> si el servidor no tiene zona horaria definida
+    Si tu MySQL ya es antiguo (5.x) o MariaDB, deja la URL como
+    jdbc:mysql://localhost:3306/empleados y no anadas nada.
+--%>
+<sql:setDataSource dataSource="jdbc/mysqlEmpleados"
+                   driver="com.mysql.jdbc.Driver"
+                   url="jdbc:mysql://localhost:3306/empleados?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC"
+                   user="root"
+                   password=""/>
