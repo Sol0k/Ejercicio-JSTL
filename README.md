@@ -1,19 +1,20 @@
-# Ejercicio JSTL — despliegue Docker en Railway
+# Guía JSTL — Docker / Railway
 
 ## Despliegue
-1. Descomprime este ZIP.
-2. Sube la carpeta `railway_jstl` a un repositorio GitHub.
-3. En Railway selecciona **New Project → Deploy from GitHub Repo** y elige el repositorio.
-4. Railway detectará el `Dockerfile` y construirá la imagen. No configures un puerto fijo: el contenedor usa la variable `PORT` de Railway.
-5. Abre el dominio público que Railway genere. La aplicación se publica en la ruta raíz (`/`).
+1. Sube el contenido de este proyecto a la raíz de un repositorio GitHub.
+2. En Railway selecciona Deploy from GitHub Repo.
+3. Railway detectará el Dockerfile y construirá la imagen.
+4. Genera un dominio público en Settings → Networking.
 
-## Base de datos del ejercicio 8
-Los ejercicios que consultan la tabla `empleados` requieren una base de datos MySQL accesible desde Railway. El archivo `app/WEB-INF/jspf/conexion.jspf` todavía apunta a `localhost:3306`, usuario `root` y contraseña vacía, igual que en el ZIP original. Eso funcionará solo en un entorno donde MySQL esté dentro del mismo contenedor, lo cual no es el caso de Railway.
+Tomcat 9 ejecuta JSP y JSTL. El script `start.sh` adapta el conector HTTP al valor `PORT` asignado por Railway.
 
-Para usar MySQL en Railway, crea una instancia MySQL y adapta `conexion.jspf` para usar las variables de conexión que Railway proporcione (`MYSQLHOST`, `MYSQLPORT`, `MYSQLDATABASE`, `MYSQLUSER`, `MYSQLPASSWORD`) o usa una URL JDBC configurada por variables de entorno. No publiques credenciales en el repositorio.
+## Estructura
+- `Dockerfile`: crea la imagen con Tomcat 9 y Java 17.
+- `app/`: aplicación web desplegada como contexto raíz.
+- `app/WEB-INF/lib/`: librerías JSTL y conector JDBC.
 
-## Notas
-- Se conserva el contenido JSP/JSTL y los JAR de `WEB-INF/lib` del ZIP original.
-- El enlace del menú al `ejercicio1.jsp` está en el proyecto original, pero ese archivo no está incluido en el ZIP; por eso ese enlace no funcionará hasta que se agregue el archivo.
-- El contenedor usa Tomcat 9 y Java 17.
-- Si la compilación falla por una incompatibilidad del controlador MySQL incluido, revisa `app/WEB-INF/lib/mysql-connector-j-26.7.0.jar` y reemplázalo por una versión oficial compatible con Java 17.
+## Base de datos
+El ejercicio 8 usa MySQL. El archivo `app/WEB-INF/jspf/conexion.jspf` apunta inicialmente a `localhost:3306/empleados`, usuario `root` y contraseña vacía. Eso solo sirve si MySQL está en el mismo contenedor, lo que no es recomendable en Railway. Para usar el ejercicio 8, crea un servicio MySQL en Railway y actualiza URL, usuario y contraseña para usar las variables de conexión de ese servicio. No guardes credenciales sensibles en un repositorio público.
+
+## Nota
+Se agregó `app/ejercicio1.jsp` porque `index.jsp` enlaza a ese archivo, pero no estaba incluido en el ZIP original. La página envía los tres números a `resultadoC1.jsp`.
